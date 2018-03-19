@@ -1,5 +1,5 @@
 .row
-  .col-xs-12.col-sm-6.col-md-offset-3
+  .col-xs-12.col-sm-8.col-sm-offset-4.col-md-6.col-md-offset-3
     %h2
       Edit #{resource_name.to_s.humanize}
       = link_to destroy_user_session_path, method: :delete, class: 'btn btn-danger pull-right' do
@@ -42,12 +42,15 @@
               %h4.modal-title
                 = resource.otp_required_for_login? ? 'Disable Two Factor Authentication' : 'Enable Two Factor Authentication'
             .modal-body
-              - unless resource.otp_required_for_login?
-                = raw RQRCode::render_qrcode(current_user.otp_provisioning_uri(current_user.email, issuer: "Demo 2FA"), :svg, level: :l, unit: 2)
-
-              .form-group
-                .text-center
-                  = f.text_field :otp_attempt, placeholder: '6 Digits Code', class: 'form-control input-lg'
+              .row
+                .col-xs-12.col-sm-3
+                  .form-group
+                    - unless resource.otp_required_for_login?
+                      = raw RQRCode::render_qrcode(current_user.otp_provisioning_uri(current_user.email, issuer: "Demo 2FA"), :svg, level: :l, unit: 2)
+                .col-xs-12.col-sm-9
+                  %p 1) Use your QR scanner to scan this QR code
+                  %p 2) Fill in text box below with the generated 6-digits code
+                  %p= f.text_field :otp_attempt, placeholder: '6-digits code', class: 'form-control'
             .modal-footer
               - btn_text = resource.otp_required_for_login? ? 'Disable' : 'Enable'
               - btn_color_class = resource.otp_required_for_login? ? 'btn-danger' : 'btn-info'
