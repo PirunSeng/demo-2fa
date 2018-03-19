@@ -17,3 +17,11 @@ gem 'sass-rails', '>= 3.2'
 group :development, :test do
   gem 'pry', '~> 0.11.3'
 end
+
+group :test do
+  gem 'shoulda-matchers', '~> 3.1', '>= 3.1.2'
+  gem 'rspec-rails', '~> 3.7', '>= 3.7.2'
+  gem 'capybara', '~> 2.18'
+  gem 'factory_bot_rails', '~> 4.8', '>= 4.8.2'
+  gem 'ffaker', '~> 2.8', '>= 2.8.1'
+end

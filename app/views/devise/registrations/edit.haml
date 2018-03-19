@@ -1,60 +1,54 @@
-%h2
-  Edit #{resource_name.to_s.humanize}
-= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f|
-  = devise_error_messages!
-  .field
-    = f.label :email
-    %br/
-    = f.email_field :email, autofocus: true
-  - if devise_mapping.confirmable? && resource.pending_reconfirmation?
-    %div
-      Currently waiting confirmation for: #{resource.unconfirmed_email}
-  .field
-    = f.label :password
-    %i (leave blank if you don't want to change it)
-    %br/
-    = f.password_field :password, autocomplete: "off"
-  .field
-    = f.label :password_confirmation
-    %br/
-    = f.password_field :password_confirmation, autocomplete: "off"
-  .field
-    = f.label :current_password
-    %i (we need your current password to confirm your changes)
-    %br/
-    = f.password_field :current_password, autocomplete: "off"
-  .actions
-    = f.submit "Update"
-%h3 Cancel my account
-%p
-  Unhappy? #{button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete}
-= link_to "Back", :back
-
-- link_text = resource.otp_required_for_login? ? 'Disable 2FA' : 'Enable 2FA'
-- btn_color_class = resource.otp_required_for_login? ? 'btn-danger' : 'btn-info'
-= link_to link_text, '#two_factor', data: { toggle: :modal }, class: "btn form-btn #{btn_color_class}"
-
-#two_factor.modal.fade
-  - url = resource.otp_required_for_login? ? disable_multi_factor_authentication_user_path(resource) : enable_multi_factor_authentication_user_path(resource)
-  = form_for :multi_factor_authentication, url: url, html: { class: 'form-inline' }  do |f|
-    .modal-dialog
-      .modal-content
-        .modal-header
-          %button.close{"aria-hidden" => "true", "data-dismiss" => "modal", :type => "button"} ×
-          %h4.modal-title
-            = resource.otp_required_for_login? ? t('.disable_two_factor_authentication') : t('.enable_two_factor_authentication')
-        .modal-body
-          - unless resource.otp_required_for_login?
-            = raw RQRCode::render_qrcode(current_user.otp_provisioning_uri(current_user.email, issuer: "Demo 2FA"), :svg, level: :l, unit: 2)
-            %hr/
-          .form-group
-            .text-center
-              = f.text_field :otp_attempt, placeholder: 'verification_code', class: 'form-control input-lg'
-        .modal-footer
-          - btn_text = resource.otp_required_for_login? ? 'disable' : 'enable'
+.row
+  .col-xs-12.col-sm-6.col-md-offset-3
+    %h2
+      Edit #{resource_name.to_s.humanize}
+      = link_to destroy_user_session_path, method: :delete, class: 'btn btn-danger pull-right' do
+        %i.fa.fa-sign-out
+        = 'Log Out'
+    = form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f|
+      = devise_error_messages!
+      .field
+        %p= f.label :email
+        %p= f.email_field :email, autofocus: true, class: 'form-control'
+      - if devise_mapping.confirmable? && resource.pending_reconfirmation?
+        %div
+          Currently waiting confirmation for: #{resource.unconfirmed_email}
+      .field
+        %p= f.label :password
+        %i (leave blank if you don't want to change it)
+        %p= f.password_field :password, autocomplete: "off", class: 'form-control'
+      .field
+        %p= f.label :password_confirmation
+        %p= f.password_field :password_confirmation, autocomplete: "off", class: 'form-control'
+      .field
+        %p= f.label :current_password
+        %i (we need your current password to confirm your changes)
+        %p= f.password_field :current_password, autocomplete: "off", class: 'form-control'
+      .actions
+        %p
+          = f.submit "Update", class: 'btn btn-success'
+          = link_to 'Cancel', root_path, class: 'btn btn-default'
+          - link_text = resource.otp_required_for_login? ? 'Disable 2FA' : 'Enable 2FA'
           - btn_color_class = resource.otp_required_for_login? ? 'btn-danger' : 'btn-info'
-          %button{ class: "btn btn-block #{btn_color_class}", type: 'submit', data: { disable_with: btn_text } }= btn_text
+          = link_to link_text, '#two_factor', data: { toggle: :modal }, class: "btn form-btn #{btn_color_class} pull-right"
 
-= link_to destroy_user_session_path, method: :delete do
-  %i.fa.fa-sign-out
-  = 'Log Out'
+    #two_factor.modal.fade
+      - url = resource.otp_required_for_login? ? disable_multi_factor_authentication_user_path(resource) : enable_multi_factor_authentication_user_path(resource)
+      = form_for :multi_factor_authentication, url: url, html: { class: 'form-inline' }  do |f|
+        .modal-dialog
+          .modal-content
+            .modal-header
+              %button.close{"aria-hidden" => "true", "data-dismiss" => "modal", :type => "button"} ×
+              %h4.modal-title
+                = resource.otp_required_for_login? ? 'Disable Two Factor Authentication' : 'Enable Two Factor Authentication'
+            .modal-body
+              - unless resource.otp_required_for_login?
+                = raw RQRCode::render_qrcode(current_user.otp_provisioning_uri(current_user.email, issuer: "Demo 2FA"), :svg, level: :l, unit: 2)
+
+              .form-group
+                .text-center
+                  = f.text_field :otp_attempt, placeholder: '6 Digits Code', class: 'form-control input-lg'
+            .modal-footer
+              - btn_text = resource.otp_required_for_login? ? 'Disable' : 'Enable'
+              - btn_color_class = resource.otp_required_for_login? ? 'btn-danger' : 'btn-info'
+              %button{ class: "btn btn-block #{btn_color_class}", type: 'submit', data: { disable_with: btn_text } }= btn_text

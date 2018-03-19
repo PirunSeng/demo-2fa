@@ -4,7 +4,7 @@ class SessionsController < Devise::SessionsController
     if resource && resource.otp_required_for_login?
       if params[:user][:otp_attempt].size > 0
         totp = ROTP::TOTP.new(resource.otp_secret)
-        if totp.verify_with_drift(params[:user][:otp_attempt], resource.class.otp_allowed_drift)
+        if totp.verify_with_drift(params[:user][:otp_attempt], 600)
           super
         else
           sign_out

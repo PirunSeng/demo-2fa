@@ -6,4 +6,8 @@ class User < ActiveRecord::Base
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :registerable,
          :recoverable, :rememberable, :trackable, :validatable
+
+  def self.otp_allowed_drift
+    60
+  end
 end
